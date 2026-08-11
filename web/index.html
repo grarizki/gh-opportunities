@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Find your next open-source contribution on GitHub. Scan repos for beginner-friendly issues, stale PRs, README gaps, and code-quality signals. Ranked scored list in minutes. Rust CLI, TUI, and agent API." />
+    <meta name="color-scheme" content="dark light" />
+    <meta property="og:title" content="gh-opp - find your next open-source contribution" />
+    <meta property="og:description" content="Scan any repo for beginner-friendly issues, stale PRs, and README gaps. Get a ranked scored list in minutes." />
+    <meta property="og:type" content="website" />
+    <link rel="preload" href="/fonts/space-grotesk.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin />
+    <title>gh-opp - find your next open-source contribution</title>
+    <script>
+      (function () {
+        try {
+          var docs = location.pathname.startsWith("/docs");
+          if (!docs) return;
+          var saved = localStorage.getItem("ghopp-theme");
+          var light = saved ? saved === "light" : window.matchMedia("(prefers-color-scheme: light)").matches;
+          if (light) document.documentElement.dataset.theme = "light";
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
