@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-latest
+            linker: aarch64-linux-gnu-gcc
+          - target: x86_64-apple-darwin
+            os: macos-13
+          - target: aarch64-apple-darwin
+            os: macos-14
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Install Linux aarch64 linker
+        if: matrix.linker
+        run: sudo apt-get update && sudo apt-get install -y gcc-aarch64-linux-gnu
+
+      - name: Build release
+        shell: bash
+        env:
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: ${{ matrix.linker }}
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Package
+        shell: bash
+        run: |
+          set -euo pipefail
+          VER="${GITHUB_REF_NAME#v}"
+          TARGET="${{ matrix.target }}"
+          EXE="target/$TARGET/release/gh-opp.exe"
+          [ -f "$EXE" ] || EXE="target/$TARGET/release/gh-opp"
+          STAGE="$(mktemp -d)"
+          cp "$EXE" "$STAGE/gh-opp"
+          case "$TARGET" in
+            *windows*) ARCHIVE="dist/gh-opp-$VER-$TARGET.zip"; tar -a -cf "$ARCHIVE" -C "$STAGE" gh-opp ;;
+            *) ARCHIVE="dist/gh-opp-$VER-$TARGET.tar.gz"; tar -czf "$ARCHIVE" -C "$STAGE" gh-opp ;;
+          esac
+          python3 - "$ARCHIVE" <<'EOF'
+          import hashlib, sys
+          p = sys.argv[1]
+          h = hashlib.sha256(open(p, "rb").read()).hexdigest()
+          open(p + ".sha256", "w").write(f"{h}  {p.split('/')[-1]}\n")
+          EOF
+
+      - name: Upload to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          fail_on_unmatched_files: true

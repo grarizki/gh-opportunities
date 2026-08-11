@@ -13,7 +13,7 @@ Rust · Async (tokio) · Terminal UI (ratatui) · HTTP API (axum) · SQLite cach
   <img src="https://img.shields.io/badge/rust-1.88+-orange.svg" alt="MSRV 1.88">
   <img src="https://img.shields.io/badge/CI-precommit%2Faudit%2Fcoverage-brightgreen.svg" alt="CI">
   <img src="https://img.shields.io/badge/tests-109%20passing-brightgreen.svg" alt="Tests">
-  <a href="https://github.com/grarizki/foxes-howl"><img src="https://img.shields.io/github/stars/grarizki/foxes-howl?style=social"></a>
+  <a href="https://github.com/grarizki/gh-opportunities"><img src="https://img.shields.io/github/stars/grarizki/gh-opportunities?style=social"></a>
 </p>
 
 ---
@@ -56,8 +56,8 @@ The composite score tells you *where you'll make the most difference* — not ju
 Requires **Rust 1.88+**. Install from source:
 
 ```bash
-git clone https://github.com/grarizki/foxes-howl.git
-cd foxes-howl
+git clone https://github.com/grarizki/gh-opportunities.git
+cd gh-opportunities
 
 # Install the binary on your PATH
 cargo install --path .
